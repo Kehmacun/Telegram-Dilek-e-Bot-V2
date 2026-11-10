@@ -28,7 +28,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 TELEGRAM_BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 YURT_ADI = "GENÇLİK VE SPOR BAKANLIĞI SÜLEYMAN ŞAH YURT MÜDÜRLÜĞÜNE"
-MODEL = "gemini-2.5-flash-lite"
+# Sırayla denenir; 2.5 modelleri Ekim 2026'da kapatıldı
+MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]
 DAILY_LIMIT = 2
 
 client = genai.Client(api_key=GEMINI_API_KEY)
@@ -183,21 +184,23 @@ KURALLAR:
 \"\"\"{sikayet_ham}\"\"\""""
 
     govde_metni = None
-    try:
-        response = await client.aio.models.generate_content(
-            model=MODEL,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                max_output_tokens=400,
-                temperature=0.2,
-                thinking_config=types.ThinkingConfig(thinking_budget=0),
-            ),
-        )
-        cikti = (response.text or "").strip()
-        if cikti:
-            govde_metni = ai_metni_hazirla(cikti)
-    except Exception as e:
-        print(f"API HATASI: {e}", flush=True)
+    for model_adi in MODELS:
+        try:
+            response = await client.aio.models.generate_content(
+                model=model_adi,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    max_output_tokens=1024,
+                    temperature=0.2,
+                ),
+            )
+            cikti = (response.text or "").strip()
+            if cikti:
+                govde_metni = ai_metni_hazirla(cikti)
+                break
+            print(f"BOS CEVAP ({model_adi})", flush=True)
+        except Exception as e:
+            print(f"API HATASI ({model_adi}): {e}", flush=True)
 
     if govde_metni is None:
         govde_metni = "<b>Tespit Edilen Hizmet Kusurları:</b><br/>" + html.escape(sikayet_ham)
