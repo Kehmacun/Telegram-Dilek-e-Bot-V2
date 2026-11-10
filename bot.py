@@ -226,7 +226,7 @@ KURALLAR:
             Paragraph(f"<b>Tarih:</b> {tarih}", normal),
             Paragraph(f"<b>Başvuran:</b> {ad_h}", normal),
             Paragraph(f"<b>Barınılan Yer:</b> {oda_h}", normal),
-            Paragraph("<b>Konu:</b> Yurt Hizmet Kusurlarının Giderilmesi ve Bilgi Edinme Talebi Hk.", normal),
+            Paragraph("<b>Konu:</b> Yurt Hizmet Kusurlarının Giderilmesi Talebi Hk.", normal),
             Spacer(1, 15),
             Paragraph(
                 f"Yurdunuz bünyesinde {oda_h} adresinde barınmaktayım. "
